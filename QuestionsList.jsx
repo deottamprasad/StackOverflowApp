@@ -12,7 +12,8 @@ import { sortItems, orderByItems } from "./dataConstants";
 
 const Item = (props) => {
     const handlePress = () => {
-        props.navigation.navigate('AnswerPage',{ques_id: props.item.question_id, link: props.item.link, quesTitle:props.item.title})
+        props.navigation.navigate('AnswerPage',{ques_id: props.item.question_id, link: props.item.link, quesTitle:props.item.title, is_answered:props.item.is_answered})
+        console.log(props.item.is_answered);
     }
     return(
         <View style={styles.itemView} on>
@@ -51,10 +52,13 @@ const Item = (props) => {
         </View>
     );
 }
+const dummyUrl = "https://mocki.io/v1/2f8eda30-17c1-4161-9348-77828e1fa01b"
+
 
 const QuestionsList = ({navigation, route}) => {
+    const realUrl = "https://api.stackexchange.com/2.3/questions?pagesize=10&order=desc&sort=activity&site=stackoverflow";
     const [data, setData] = useState({});
-    const [url, setUrl] = useState("https://mocki.io/v1/2f8eda30-17c1-4161-9348-77828e1fa01b");
+    const [url, setUrl] = useState(realUrl);
     const [sortValue, setSortValue] = useState("");
     const [orderValue, setOrderValue] = useState("");
     // console.log(sortValue);
@@ -62,13 +66,20 @@ const QuestionsList = ({navigation, route}) => {
     if(route&&route.params) {
         // console.log(route.params);
         //change the below url according to route.params
-        setUrl("https://mocki.io/v1/2f8eda30-17c1-4161-9348-77828e1fa01b");
+        const {pgSize, fromDate, toDate, tagged} = route.params;
+        const newFromDate = fromDate ? JSON.stringify(Date.parse(fromDate)).slice(0,-3) : "";
+        const newToDate = toDate ? JSON.stringify(Date.parse(toDate)).slice(0,-3) : "";
+        // console.log(newFromDate);
+        // console.log(newToDate);
+        // console.log(route.params);
+        const newUrl = "https://api.stackexchange.com/2.3/questions?pagesize="+pgSize+"&fromdate="+newFromDate+"&todate="+newToDate+"&order=desc&sort=activity&tagged="+tagged+"&site=stackoverflow"
+        // console.log(newUrl);
+        setUrl(newUrl);
         route.params=false;
         route=false;
     }
     useEffect(() => {
         fetch(url).then((res)=>res.json()).then((d)=>setData(d)).catch((e)=>console.log(e));
-        // console.log(data);
       },[url]);
     if(data==={}) {
         return <WaitingPage />
@@ -127,7 +138,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     flatListView: {
-      
+      paddingBottom: 50,
     },
     itemView: {
         backgroundColor: "white",

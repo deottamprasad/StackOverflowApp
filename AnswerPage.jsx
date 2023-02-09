@@ -1,13 +1,30 @@
 import React, {useState, useEffect} from "react";
-import { Linking, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Linking, StyleSheet, Text, TouchableOpacity, View, FlatList } from "react-native";
 
 import Icon from "./Icon";
+import WaitingPage from "./WaitingPage";
 
+
+const dummyUrl = "https://mocki.io/v1/e07c4bec-8262-4f15-9693-9474e314c9ce"
+
+
+const AnsItem = (props) => {
+    const item = props.item;
+    return (
+        <View style={styles.answersList} key={item.answer_id}>
+            <Text style={styles.dispNameText}>Answered By: {item.owner.display_name}</Text>
+            <Text style={styles.scoreText}>Score: {item.score}</Text>
+            <Icon isAnswered={item.is_accepted} accOrAns="Accepted" colour="white"/>
+        </View>
+    );
+}
 
 const AnswerPage = ({navigation, route}) => {
     const [data, setData] = useState({});
     useEffect(() => {
-        const url = "https://mocki.io/v1/e07c4bec-8262-4f15-9693-9474e314c9ce";
+        console.log(route.params.ques_id);
+        const realUrl = "https://api.stackexchange.com/2.3/questions/"+JSON.stringify(route.params.ques_id)+"/answers?order=asc&sort=activity&site=stackoverflow";
+        const url = realUrl;
         fetch(url).then((res)=>res.json()).then((d)=>setData(d));
         console.log(data);
       },[]);
@@ -15,43 +32,48 @@ const AnswerPage = ({navigation, route}) => {
         return <WaitingPage />
     }
     else {
-        if(data.items) {
+        console.log(route.params.is_answered);
+        if(route.params.is_answered&&data.items) {
         return (
             <View style={styles.answerView} >
                 <View style={styles.quesTitleView} >
                     <Text style={styles.quesTitleText} >{route.params.quesTitle}</Text>
                 </View>
                 <Text style={styles.totalAnsText}>{data.items.length} Answers</Text>
-
-                {
-                    data.items.map((item) => {
-                        return (
-                        <View style={styles.answersList} key={item.answer_id}>
-                            <Text style={styles.dispNameText}>Answered By: {item.owner.display_name}</Text>
-                            <Text style={styles.scoreText}>Score: {item.score}</Text>
-                            <Icon isAnswered={item.is_accepted} accOrAns="Accepted" colour="white"/>
-                        </View>
-                        );
-                    })
-                }
+                
+                <FlatList
+                    data={data.items}
+                    renderItem={({item}) => <AnsItem item={item} /> }
+                    keyExtractor={(item)=>item.answer_id}
+                />
                 <TouchableOpacity >
                     <Text style={styles.linkText}
-                            onPress={() => Linking.openURL(route.params.link)}>
+                            onPress={() => navigation.navigate("WebViewComp",{url:route.params.link})}>
                             View Answers on StackOverflow
                     </Text>
                 </TouchableOpacity>
             </View>
         )
         }
-        else
-        {
+        else if(route.params.is_answered) {
+            return (
+                <WaitingPage />
+            )
+        }
+        else {
             return (
                 <View style={styles.answerView} >
-                    <Text>No one has answered this question right now:</Text>
-                    <Text style={{color: 'blue'}}
-                        onPress={() => Linking.openURL(route.params.link)}>
-                        Click to answer first
-                    </Text>
+                    <View style={styles.quesTitleView} >
+                        <Text style={styles.quesTitleText} >{route.params.quesTitle}</Text>
+                    </View>
+                    <View style={styles.noAnsView} >
+                        <Text style={styles.text1}>No one has answered this question right now!</Text>
+                        <Text style={styles.text2}
+                        //Linking.openURL(route.params.link)
+                            onPress={() => navigation.navigate("WebViewComp",{url:route.params.link})}>
+                            Click to answer first
+                        </Text>
+                    </View>
                 </View>
             )
         }
@@ -70,7 +92,7 @@ const styles = StyleSheet.create({
     },
     quesTitleText: {
         color: "white",
-        fontSize: 16,
+        fontSize: 17,
         fontWeight: "bold",
     },
     totalAnsText: {
@@ -99,7 +121,22 @@ const styles = StyleSheet.create({
         color: "white",
         alignSelf: "center",
         fontSize: 15,
+        marginBottom: 5,
     },
+    noAnsView: {
+        alignItems: "center",
+        marginTop: 50,
+    },
+    text1: {
+        color: "gold",
+        fontSize: 15,
+    },
+    text2: {
+        color: "gold",
+        fontSize: 15,
+        fontWeight: "bold",
+        marginTop: 10,
+    }
 })
 
 export default AnswerPage;

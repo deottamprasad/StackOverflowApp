@@ -2,12 +2,14 @@ import React, { useEffect } from "react";
 import {} from "react-native";
 import {NavigationContainer} from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import SplashScreen from "react-native-splash-screen";
 
 import QuestionsList from "./QuestionsList";
 import AnswerPage from "./AnswerPage";
 import FiltersPage from "./FiltersPage";
 import WaitingPage from "./WaitingPage";
-import SplashScreen from "react-native-splash-screen";
+import WebViewComp from "./WebViewComp";
+
 
 const Stack = createNativeStackNavigator();
 
@@ -18,7 +20,7 @@ const App = () => {
   })
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="QuestionsList">
+      <Stack.Navigator initialRouteName="FilterPage">
         <Stack.Screen
         name="QuestionsList"
         component={QuestionsList}
@@ -38,6 +40,11 @@ const App = () => {
         name="WaitingPage"
         component={WaitingPage}
         options={{title:"WaitingPage", headerShown:false}} 
+        />
+        <Stack.Screen
+        name="WebViewComp"
+        component={WebViewComp}
+        options={{title:"stack Overflow", headerShown:true}} 
         />
       </Stack.Navigator>
     </NavigationContainer>
