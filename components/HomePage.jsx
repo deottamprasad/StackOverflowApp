@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from "react";
-import {StyleSheet, Text, View, FlatList, TouchableOpacity, Image} from "react-native";
+import {StyleSheet, Text, View, FlatList, TouchableOpacity, Image, Button} from "react-native";
 
 
 import WaitingPage from "./WaitingPage";
 import Icon from "./Icon"
 import DropdownList from "./DropdownList";
 
-import { dateConverter } from "./utilFunctions";
-import { sortItems, orderByItems } from "./dataConstants";
+import { dateConverter } from "../utilFunctions";
+import { sortItems, orderByItems } from "../dataConstants";
 
 
 const Item = (props) => {
     const handlePress = () => {
         props.navigation.navigate('AnswerPage',{ques_id: props.item.question_id, link: props.item.link, quesTitle:props.item.title, is_answered:props.item.is_answered})
-        console.log(props.item.is_answered);
+        // console.log(props.item.is_answered);
     }
     return(
         <View style={styles.itemView} on>
@@ -55,34 +55,47 @@ const Item = (props) => {
 const dummyUrl = "https://mocki.io/v1/2f8eda30-17c1-4161-9348-77828e1fa01b"
 
 
-const QuestionsList = ({navigation, route}) => {
+const HomePage = ({navigation, route}) => {
     const realUrl = "https://api.stackexchange.com/2.3/questions?pagesize=10&order=desc&sort=activity&site=stackoverflow";
     const [data, setData] = useState({});
     const [url, setUrl] = useState(realUrl);
     const [sortValue, setSortValue] = useState("");
-    const [orderValue, setOrderValue] = useState("");
+    const [orderValue, setOrderValue] = useState("asc");
     // console.log(sortValue);
     // console.log(orderValue);
     if(route&&route.params) {
         // console.log(route.params);
         //change the below url according to route.params
         const {pgSize, fromDate, toDate, tagged} = route.params;
+        const newPgSize = pgSize || 1;
         const newFromDate = fromDate ? JSON.stringify(Date.parse(fromDate)).slice(0,-3) : "";
         const newToDate = toDate ? JSON.stringify(Date.parse(toDate)).slice(0,-3) : "";
         // console.log(newFromDate);
         // console.log(newToDate);
         // console.log(route.params);
-        const newUrl = "https://api.stackexchange.com/2.3/questions?pagesize="+pgSize+"&fromdate="+newFromDate+"&todate="+newToDate+"&order=desc&sort=activity&tagged="+tagged+"&site=stackoverflow"
+        const newUrl = "https://api.stackexchange.com/2.3/questions?pagesize="+newPgSize+"&fromdate="+newFromDate+"&todate="+newToDate+"&order=desc&sort=activity&tagged="+tagged+"&site=stackoverflow"
         // console.log(newUrl);
         setUrl(newUrl);
         route.params=false;
         route=false;
     }
     useEffect(() => {
+        setData({});
         fetch(url).then((res)=>res.json()).then((d)=>setData(d)).catch((e)=>console.log(e));
+        
       },[url]);
-    if(data==={}) {
+    if(!data.items) {    
         return <WaitingPage />
+    }
+    else if(data.items.length==0) {
+        return (
+            <View style={styles.containerNoRes} >
+                <Text style={styles.noResText}> No results found</Text>
+                <TouchableOpacity style={styles.backBtn} >
+                    <Text style={styles.backBtnText} onPress={() => navigation.navigate("FiltersPage")} >Go back</Text>
+                </TouchableOpacity>
+            </View>
+        )
     }
     else {
         const handleFilter = () => {
@@ -122,10 +135,12 @@ const styles = StyleSheet.create({
     },
     filterView: {
         width: "94%",
-        backgroundColor:"#545454",
+        backgroundColor:"#61B15A",
         alignItems: "center",
-        borderRadius: 7,
+        borderRadius: 10,
         marginBottom: 5,
+        paddingTop: 5,
+        paddingBottom: 5,
     },
     filterButton: {
         color: "white",
@@ -145,6 +160,7 @@ const styles = StyleSheet.create({
         justifyContent:"center",
         margin: 10,
         width: "94%",
+        borderRadius: 20,
     },
     itemViewFirstContainer: {
         padding: 8,
@@ -188,7 +204,30 @@ const styles = StyleSheet.create({
     },
     orderText: {
         color: "white",
-    }
+    },
+    containerNoRes: {
+        flex: 1,
+        backgroundColor: "black",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    noResText: {
+        color: "white",
+        fontSize: 15,
+        marginBottom: 10,
+    },
+    backBtn: {
+        marginTop: 10,
+        borderRadius: 15,
+        padding: 10,
+        width: "40%",
+        backgroundColor: "yellow",
+        alignItems: "center",
+    },
+    backBtnText: {
+        color: "black",
+        fontWeight: "bold",
+    },
     // answerView: {
     //     flex:1,
     //     padding: 2,
@@ -204,4 +243,4 @@ const styles = StyleSheet.create({
     
 })
 
-export default QuestionsList;
+export default HomePage;

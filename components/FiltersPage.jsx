@@ -14,7 +14,7 @@ const FiltersPage = ({navigation, route}) => {
 
     const handlePress = () => {
         const obj = {pgSize:pageSize,fromDate:fromDate,toDate:toDate,tagged:tagged};
-        navigation.navigate('QuestionsList',obj);
+        navigation.navigate('HomePage',obj);
     }
 
     const handleFromCalPress = () => {
@@ -27,13 +27,13 @@ const FiltersPage = ({navigation, route}) => {
         setDate(date)
         // console.log(date);
         if(fromOpen) {
-            console.log("fromOpen")
+            // console.log("fromOpen")
             setFromDate(JSON.stringify(date).slice(1,11));
             // console.log(fromDate);
             setFromOpen(false)
         }
         else {
-            console.log("toOpen")
+            // console.log("toOpen")
             setToDate(JSON.stringify(date).slice(1,11));
             // console.log(toDate)
             setToOpen(false)
@@ -111,17 +111,19 @@ const styles =  StyleSheet.create({
     },
     catText: {
         color: "white",
-
+        fontSize: 20,
     },
     inputView: {
         backgroundColor: "white",
-        margin: 5,
+        margin: 10,
         paddingLeft: 5,
         width: "94%",
+        height: "11%",
+        borderRadius: 10,
+        justifyContent: "center",
     },
     TextInput: {
         color: "black",
-        marginBottom: 7,
     },
     dateView: {
         flexDirection: "row",
@@ -132,6 +134,7 @@ const styles =  StyleSheet.create({
         margin: 5,
         paddingLeft: 5,
         paddingRight: 5,
+        borderRadius: 10,
     },
     calImgView: {
 
@@ -141,14 +144,14 @@ const styles =  StyleSheet.create({
         height: 40,
     },
     searchBtn: {
-        backgroundColor: "darkblue",
+        backgroundColor: "#0081C9",
         alignItems: "center",
         justifyContent: "center",
         paddingTop: 7,
         paddingBottom: 7,
         marginTop: 10,
         width: "94%",
-        borderRadius: 5,
+        borderRadius: 10,
     },
     searchTxt: {
         color: "white",

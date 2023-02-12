@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 
 
-import { callbackSelection } from "./utilFunctions";
+import { callbackSelection } from "../utilFunctions";
 
 
 const DropdownList = (props) => {
@@ -11,8 +11,8 @@ const DropdownList = (props) => {
     const handleChange = (item) => {
         props.setValue(item.value);
         let newQuesOrder = JSON.parse(JSON.stringify(props.ques));
-        console.log(item.value);
-        console.log(props.otherValue);
+        // console.log(item.value);
+        // console.log(props.otherValue);
         if(!props.reverse)
             newQuesOrder.items.sort(callbackSelection(item.value,props.otherValue));
         else
@@ -55,7 +55,8 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
         borderColor: "black",
         borderWidth: 1,
-        backgroundColor: "white",
+        backgroundColor: "#FFFFEA",
+        borderRadius: 5,
     },
     placeholderStyle: {
         fontSize: 10,

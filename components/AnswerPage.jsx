@@ -1,11 +1,22 @@
 import React, {useState, useEffect} from "react";
-import { Linking, StyleSheet, Text, TouchableOpacity, View, FlatList } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View, FlatList } from "react-native";
 
 import Icon from "./Icon";
 import WaitingPage from "./WaitingPage";
 
 
-const dummyUrl = "https://mocki.io/v1/e07c4bec-8262-4f15-9693-9474e314c9ce"
+//const dummyUrl = "https://mocki.io/v1/e07c4bec-8262-4f15-9693-9474e314c9ce"
+
+// interface PropsType {
+//     item: {
+//         answer_id: string,
+//         owner: {
+//             display_name: string,
+//         }
+//         score: string,
+//         is_accepted: boolean,
+//     },
+// }
 
 
 const AnsItem = (props) => {
@@ -14,7 +25,7 @@ const AnsItem = (props) => {
         <View style={styles.answersList} key={item.answer_id}>
             <Text style={styles.dispNameText}>Answered By: {item.owner.display_name}</Text>
             <Text style={styles.scoreText}>Score: {item.score}</Text>
-            <Icon isAnswered={item.is_accepted} accOrAns="Accepted" colour="white"/>
+            <Icon isAnswered={item.is_accepted} accOrAns="Accepted" colour="black"/>
         </View>
     );
 }
@@ -22,24 +33,24 @@ const AnsItem = (props) => {
 const AnswerPage = ({navigation, route}) => {
     const [data, setData] = useState({});
     useEffect(() => {
-        console.log(route.params.ques_id);
+        // console.log(route.params.ques_id);
         const realUrl = "https://api.stackexchange.com/2.3/questions/"+JSON.stringify(route.params.ques_id)+"/answers?order=asc&sort=activity&site=stackoverflow";
         const url = realUrl;
         fetch(url).then((res)=>res.json()).then((d)=>setData(d));
-        console.log(data);
+        // console.log(data);
       },[]);
-    if(!data) {
-        return <WaitingPage />
-    }
-    else {
-        console.log(route.params.is_answered);
+    // if(!data) {
+    //     return <WaitingPage />
+    // }
+    // else {
+    //     console.log(route.params.is_answered);
         if(route.params.is_answered&&data.items) {
         return (
             <View style={styles.answerView} >
                 <View style={styles.quesTitleView} >
                     <Text style={styles.quesTitleText} >{route.params.quesTitle}</Text>
                 </View>
-                <Text style={styles.totalAnsText}>{data.items.length} Answers</Text>
+                <Text style={styles.totalAnsText}>{data.items.length} Answer{data.items.length>1?"s":""}</Text>
                 
                 <FlatList
                     data={data.items}
@@ -78,7 +89,7 @@ const AnswerPage = ({navigation, route}) => {
             )
         }
     }
-}
+// }
 
 
 const styles = StyleSheet.create({
@@ -102,26 +113,23 @@ const styles = StyleSheet.create({
     },
     answersList: {
         margin: 10,
-        backgroundColor: "#AC9F3C",
+        backgroundColor: "#FFEE63", //AC9F3C
         padding: 10,
-        borderRadius: 5,
+        borderRadius: 15,
     },
     dispNameText: {
-        color: "white",
+        color: "black",
         fontSize: 18,
         fontWeight: "bold",
     },
     scoreText: {
-        color: "white",
-    },
-    isAcceptedText: {
-        color: "white",
+        color: "black",
     },
     linkText: {
-        color: "white",
+        color: "#9CFF2E",
         alignSelf: "center",
         fontSize: 15,
-        marginBottom: 5,
+        marginBottom: 10,
     },
     noAnsView: {
         alignItems: "center",
