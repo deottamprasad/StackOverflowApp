@@ -1,14 +1,15 @@
 import React, { useEffect } from "react";
-import { StyleSheet } from "react-native";
 import {NavigationContainer} from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import SplashScreen from "react-native-splash-screen";
 
-import HomePage from "./HomePage";           //Home Page
-import AnswerPage from "./AnswerPage";       //Answers Page
-import FiltersPage from "./FiltersPage";     //Filters Page
-import WaitingPage from "./WaitingPage";     //Loading Page
-import WebViewComp from "./WebViewComp";     //Web View Page
+import HomePage from "../HomePage/HomePage";           //Home Page
+import AnswerPage from "../AnswerPage/AnswerPage";       //Answers Page
+import FiltersPage from "../FiltersPage/FiltersPage";     //Filters Page
+import WaitingPage from "../WaitingPage/WaitingPage";     //Loading Page
+import WebViewComp from "../WebViewComp/WebViewComp";     //Web View Page
+
+import styles from "./styles";
 
 
 const Stack = createNativeStackNavigator();
@@ -61,12 +62,5 @@ const App = () => {
   );
 }
 
-const styles = StyleSheet.create({
-  headStyle: {
-    backgroundColor: "gold",  //#AAE3E2
-    borderBottomColor: "gold",
-    borderBottomWidth: 0,
-  },
-})
 
 export default App;
